@@ -1,179 +1,461 @@
-# Inventory Management System (Full Java Web Application)
+# StockPilot — Inventory Management System
 
-Aplikasi Web Manajemen Inventaris profesional berbasis **Java 21 LTS**, **Spring Boot 3.5.6**, **Spring Security**, **Spring Data JPA**, **Thymeleaf**, dan **PostgreSQL** yang siap di-deploy pada Home Server menggunakan **Docker Compose** dan **Ubuntu Server 26.04 LTS**.
+**Smarter Inventory. Better Control.**
 
----
+StockPilot is a modern web-based inventory management system built with Java 21 LTS and Spring Boot. It provides centralized inventory control, stock monitoring, item lending and return management, user administration, and transaction reporting.
 
-## 1. Arsitektur & Teknologi
+Designed with a modular architecture, PostgreSQL database, and Docker deployment support, StockPilot is suitable for local development and self-hosted environments.
 
-- **Backend:** Java 21 LTS, Spring Boot 3.5.6, Spring Security, Spring Data JPA, Hibernate ORM, Bean Validation.
-- **Database:** PostgreSQL 16/17 dengan migrasi skema menggunakan Flyway.
-- **Frontend:** Thymeleaf Template Engine, HTML5, CSS3 kustom responsif (Dark Navy, White, Blue, Light Gray), Vanilla JS.
-- **Keamanan:** BCrypt password hashing, session-based authentication, Role-based Access Control (ADMIN & STAFF), CSRF protection dengan token repository, proteksi SQL Injection via JPA.
-- **Deployment:** Multi-stage Dockerfile, Docker Compose (`compose.yaml`), Linux container non-root user, Application healthcheck (`/actuator/health`).
+## Tech Stack
 
----
+| Component | Technology |
+|---|---|
+| Programming Language | Java 21 LTS |
+| Backend Framework | Spring Boot 3.5.6 |
+| Security | Spring Security |
+| Data Persistence | Spring Data JPA & Hibernate |
+| Database | PostgreSQL 16+ |
+| Database Migration | Flyway |
+| Frontend | Thymeleaf, HTML5, CSS3, Vanilla JavaScript |
+| Build Tool | Apache Maven 3.9+ |
+| Password Hashing | BCrypt |
+| Containerization | Docker & Docker Compose |
+| Web Server | Embedded Apache Tomcat |
+| Operating System | Ubuntu Server 26.04 LTS / Windows |
 
-## 2. Struktur Proyek
+## Features
 
-```
-b:\Infentori full java\
-├── .mvn/wrapper/
+### Authentication & Authorization
+- Session-based authentication.
+- Secure password hashing using BCrypt.
+- Role-based access control (ADMIN and STAFF).
+- CSRF protection.
+- Login, logout, and session management.
+- Protected application routes.
+
+### Dashboard
+- Total inventory statistics.
+- Total categories and users.
+- Available stock monitoring.
+- Borrowed inventory statistics.
+- Recent transaction activity.
+- Low-stock notifications.
+- Inventory activity overview.
+
+### Inventory Management
+- Create, read, update, and delete inventory items.
+- Manage item categories.
+- Search and filter inventory.
+- Stock quantity management.
+- Item descriptions and storage locations.
+- Input validation and data integrity.
+
+### Borrowing & Returns
+- Create borrowing transactions.
+- Approve or reject borrowing requests.
+- Manage borrowing and return status.
+- Automatic stock adjustments.
+- Insufficient stock validation.
+- Transaction history.
+- Overdue transaction monitoring.
+
+### User Management
+- Administrator and staff accounts.
+- User creation and editing.
+- Role management.
+- Account status management.
+- User administration restricted to administrators.
+
+### Reports & Activity
+- Transaction history.
+- Stock movement records.
+- Date-based filtering.
+- User-based filtering.
+- CSV report export.
+
+## Project Architecture
+
+StockPilot uses a layered application architecture to separate business logic, database operations, security, and presentation.
+
+```text
+stockpilot-java/
+│
+├── .mvn/
+│   └── wrapper/
+│
 ├── src/
 │   ├── main/
 │   │   ├── java/com/inventorymanagement/
-│   │   │   ├── config/          # SecurityConfig, AdminBootstrapConfig, WebConfig
-│   │   │   ├── controller/      # AuthController, DashboardController, ItemController, ...
-│   │   │   ├── dto/             # UserDTO, ItemDTO, CategoryDTO, LoanDTO, ...
-│   │   │   ├── entity/          # User, Category, Item, Loan, LoanItem, AuditLog, Role, LoanStatus
-│   │   │   ├── exception/       # GlobalExceptionHandler, Custom Exceptions
-│   │   │   ├── repository/      # UserRepository, ItemRepository, LoanRepository, ...
-│   │   │   ├── scheduler/       # OverdueScheduler
-│   │   │   ├── security/        # CustomUserDetails, CustomUserDetailsService
-│   │   │   └── service/         # UserService, ItemService, CategoryService, LoanService, ...
+│   │   │   ├── config/
+│   │   │   ├── controller/
+│   │   │   ├── dto/
+│   │   │   ├── entity/
+│   │   │   ├── exception/
+│   │   │   ├── repository/
+│   │   │   ├── scheduler/
+│   │   │   ├── security/
+│   │   │   └── service/
+│   │   │
 │   │   └── resources/
-│   │       ├── db/migration/    # V1__init_schema.sql (Flyway)
-│   │       ├── static/css/      # style.css (Desain modern responsif)
-│   │       ├── templates/       # login.html, dashboard.html, items/, categories/, loans/, ...
+│   │       ├── db/migration/
+│   │       ├── static/
+│   │       │   ├── css/
+│   │       │   ├── js/
+│   │       │   └── images/
+│   │       ├── templates/
 │   │       └── application.properties
+│   │
 │   └── test/
 │       ├── java/com/inventorymanagement/
-│       │   ├── AuthenticationSecurityTest.java   # Pengujian otentikasi & otorisasi Spring Security
-│       │   └── InventoryServiceTest.java         # Pengujian logika bisnis, stok & peminjaman
 │       └── resources/
-│           └── application-test.properties       # H2 in-memory DB test profile
-├── Dockerfile                   # Multi-stage build (Temurin 21 JDK -> JRE)
-├── compose.yaml                 # Docker Compose (app + db)
-├── .env.example                 # Template variabel lingkungan
-└── pom.xml
+│
+├── deploy/
+│
+├── loadtest/
+│
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── Dockerfile
+├── compose.yaml
+├── pom.xml
+└── README.md
 ```
 
----
+## Requirements
 
-## 3. Konfigurasi Lingkungan (`.env`)
+Before running StockPilot locally, make sure the following software is installed:
 
-Salin file `.env.example` menjadi `.env`:
+- Java Development Kit (JDK) 21 LTS.
+- Apache Maven 3.9 or newer.
+- PostgreSQL 16 or newer.
+- Git (optional, for source control).
+- Docker Engine and Docker Compose (for container deployment).
+
+## Environment Configuration
+
+StockPilot uses environment variables to manage database credentials, application settings, and administrator bootstrap configuration.
+
+**Important security notice:**
+
+Never commit your actual `.env` file, database passwords, administrator passwords, or other private credentials to GitHub.
+
+The repository includes `.env.example` as a configuration template.
+
+### Setup
+
+Create your local environment file from the template.
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Linux / Ubuntu:
 
 ```bash
 cp .env.example .env
+chmod 600 .env
 ```
 
-Isi variabel sesuai konfigurasi Anda:
+Edit the `.env` file and replace all placeholder values with your own configuration.
+
+Example template:
+
 ```properties
 # Database Configuration
-DB_NAME=inventory_db
-DB_USERNAME=postgres
-DB_PASSWORD=your_secure_password_here
+DB_NAME=inventory
+DB_USERNAME=inventory_app
+DB_PASSWORD=CHANGE_ME_TO_A_STRONG_PASSWORD
 
-# Application Port
+# Application Configuration
 APP_PORT=8080
 
-# Bootstrap Akun Administrator (hanya dieksekusi saat pertama kali database kosong)
+# Administrator Bootstrap
 ADMIN_USERNAME=admin
 ADMIN_EMAIL=admin@inventory.local
-ADMIN_PASSWORD=your_secure_admin_password
+ADMIN_PASSWORD=CHANGE_ME_TO_A_UNIQUE_PASSWORD
 ```
 
----
+These values are examples, not production credentials. Make sure the variable names match the application's `compose.yaml` and configuration files.
 
-## 4. Menjalankan di Localhost
+Administrator bootstrap credentials should only be used during initial account creation. Never use a hardcoded or publicly documented administrator password.
 
-### Persyaratan:
-- JDK 21 LTS
-- Maven 3.9+
-- PostgreSQL 16+ aktif di `localhost:5432` dengan database `inventory_db`
+## Running Locally
 
-### Langkah Menjalankan:
+### 1. Clone the repository
+
 ```bash
-# 1. Masuk ke direktori proyek
-cd "b:\Infentori full java"
+git clone https://github.com/YOUR_USERNAME/stockpilot-java.git
 
-# 2. Jalankan automated test
+cd stockpilot-java
+```
+
+### 2. Prepare PostgreSQL
+
+Create a database and a dedicated application user.
+
+Example SQL:
+
+```sql
+CREATE ROLE inventory_app
+WITH LOGIN PASSWORD 'YOUR_LOCAL_DATABASE_PASSWORD';
+
+CREATE DATABASE inventory
+WITH OWNER inventory_app;
+```
+
+### 3. Configure the database connection
+
+For Windows PowerShell:
+
+```powershell
+$env:SPRING_DATASOURCE_URL = "jdbc:postgresql://localhost:5432/inventory"
+
+$env:SPRING_DATASOURCE_USERNAME = "inventory_app"
+
+$env:SPRING_DATASOURCE_PASSWORD = "YOUR_LOCAL_DATABASE_PASSWORD"
+```
+
+Make sure these credentials match the PostgreSQL role and database you created.
+
+### 4. Run automated tests
+
+```bash
 mvn clean test
+```
 
-# 3. Build file executable JAR
-mvn clean package -DskipTests
+### 5. Build the application
 
-# 4. Jalankan aplikasi
+```bash
+mvn clean package
+```
+
+The executable JAR will be generated inside:
+
+```text
+target/inventory-management-1.0.0.jar
+```
+
+### 6. Start the application
+
+```bash
 java -jar target/inventory-management-1.0.0.jar
 ```
-Akses aplikasi melalui browser di: `http://localhost:8080` (otomatis diarahkan ke `http://localhost:8080/login`).
 
-Akun default bootstrap:
-- **Username:** `admin`
-- **Password:** `admin123` (atau sesuai nilai `app.admin.password` di konfigurasi)
+Alternatively, use the Spring Boot Maven plugin:
 
----
-
-## 5. Deployment Menggunakan Docker Compose (Ubuntu Server 26.04 LTS)
-
-### Perintah Langsung di Ubuntu Server:
 ```bash
-# 1. Pasang Docker & Docker Compose plugin jika belum ada
-sudo apt update && sudo apt install -y docker.io docker-compose-v2
+mvn spring-boot:run
+```
 
-# 2. Masuk ke direktori aplikasi
-cd /opt/inventory-management
+### 7. Access the application
 
-# 3. Siapkan environment file
+Open your browser:
+
+```text
+http://localhost:8080
+```
+
+The login page is expected at:
+
+```text
+http://localhost:8080/login
+```
+
+Database migrations are managed through Flyway during application startup.
+
+## Docker Deployment
+
+StockPilot supports containerized deployment using Docker Compose.
+
+### 1. Prepare the server
+
+Install Docker Engine and the Docker Compose plugin using the official documentation:
+
+https://docs.docker.com/engine/install/ubuntu/
+
+Verify the installation:
+
+```bash
+docker --version
+
+docker compose version
+```
+
+### 2. Clone the project
+
+```bash
+sudo mkdir -p /opt/stockpilot
+
+sudo chown "$USER":"$USER" /opt/stockpilot
+
+git clone https://github.com/YOUR_USERNAME/stockpilot-java.git /opt/stockpilot
+
+cd /opt/stockpilot
+```
+
+### 3. Configure environment variables
+
+```bash
 cp .env.example .env
+
+chmod 600 .env
+
 nano .env
+```
 
-# 4. Jalankan aplikasi di latar belakang
+Set strong and unique credentials before starting the application.
+
+### 4. Validate Docker Compose configuration
+
+```bash
+docker compose config --quiet
+```
+
+### 5. Build and start the containers
+
+```bash
 docker compose up -d --build
+```
 
-# 5. Cek status container
+### 6. Monitor container status
+
+```bash
 docker compose ps
+```
 
-# 6. Cek logs aplikasi secara live
+### 7. View application logs
+
+```bash
 docker compose logs -f app
 ```
 
-### Perintah Manajemen Operasional:
+### 8. Access StockPilot
+
+```text
+http://SERVER_IP:8080
+```
+
+Replace `SERVER_IP` with your Ubuntu Home Server's local IP address.
+
+## Docker Management
+
+Common commands for application maintenance:
+
 ```bash
-# Restart container
+# Restart all services
 docker compose restart
 
-# Mengganti Port Aplikasi (misal port 9000):
-# Ubah APP_PORT=9000 di file .env, lalu jalankan:
-docker compose up -d
+# Restart the Java application
+docker compose restart app
 
-# Backup Database PostgreSQL:
-docker compose exec -T db pg_dump -U postgres inventory_db > backup_$(date +%F).sql
+# Stop containers without deleting persistent data
+docker compose down
 
-# Restore Database PostgreSQL:
-docker compose exec -T db psql -U postgres -d inventory_db < backup_2026-11-12.sql
+# Rebuild and update the application
+docker compose up -d --build
 
-# Mengatasi Masalah Koneksi Database:
-# Pastikan container db sudah dalam status (healthy):
-docker compose ps
-docker compose logs db
+# Check container resource usage
+docker stats
+
+# View database logs
+docker compose logs -f db
+
+# View application logs
+docker compose logs -f app
 ```
+
+**Warning:** Avoid using `docker compose down -v` unless you intentionally want to delete persistent volumes, including database data.
+
+## Database Backup & Restore
+
+### Backup PostgreSQL
+
+```bash
+docker compose exec -T db sh -c \
+'pg_dump -U "$POSTGRES_USER" "$POSTGRES_DB"' \
+> "backup_$(date +%F).sql"
+```
+
+### Restore PostgreSQL
+
+```bash
+cat backup_2026-11-12.sql | docker compose exec -T db sh -c \
+'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+```
+
+Replace the backup filename with the actual file you want to restore.
+
+Store backups in a secure location and periodically verify that they can be restored.
+
+## Testing & Quality Assurance
+
+StockPilot includes automated testing for important application components.
+
+Test coverage includes:
+
+- Authentication and authorization.
+- Protected routes.
+- Inventory business logic.
+- Stock validation.
+- Borrowing transactions.
+- Return processing.
+- Application security.
+
+Run the test suite:
+
+```bash
+mvn clean test
+```
+
+Maven test reports are available under:
+
+```text
+target/surefire-reports/
+```
+
+Record the actual number of passed, failed, and skipped tests from the latest test execution.
+
+## Security Guidelines
+
+Security is an important part of StockPilot.
+
+- Never publish real `.env` files.
+- Never hardcode database credentials.
+- Never commit production passwords or API secrets.
+- Use BCrypt for password hashing.
+- Keep CSRF protection enabled.
+- Apply role-based access control.
+- Use unique and strong administrator credentials.
+- Restrict public access to PostgreSQL.
+- Keep Docker images and application dependencies updated.
+- Back up database data regularly.
+
+## Roadmap
+
+Potential future improvements:
+
+- [ ] Advanced inventory analytics.
+- [ ] Barcode and QR code integration.
+- [ ] PDF report generation.
+- [ ] Email notifications.
+- [ ] Advanced audit log viewer.
+- [ ] REST API integration.
+- [ ] Automated backup scheduling.
+- [ ] Performance monitoring with Prometheus and Grafana.
+- [ ] Load testing with k6.
+- [ ] Security testing with OWASP ZAP.
+
+## License
+
+This project is currently maintained as a personal development and learning project.
+
+A license will be added when the distribution terms are finalized.
 
 ---
 
-## 6. Fitur Aplikasi yang Telah Diverifikasi
+**StockPilot**
 
-- [x] **Authentication System**:
-  - Halaman login modern responsif (`/login`).
-  - Penanganan error kredensial salah dengan pesan Bahasa Indonesia.
-  - Penanganan notifikasi logout berhasil.
-  - Enkripsi password menggunakan BCrypt.
-  - CSRF Token terintegrasi secara aman pada setiap form POST.
-- [x] **Role-Based Authorization**:
-  - Pengguna belum login dialihkan (302) ke `/login` saat mencoba mengakses `/dashboard` atau halaman lainnya.
-  - Akun Administrator dapat mengakses menu Kelola Pengguna (`/users`).
-  - Akun Staff dibatasi dari menu konfigurasi administrator.
-- [x] **Dashboard Modern**:
-  - Kartu statistik (Total Barang, Kategori, Stok Tersedia, Sedang Dipinjam, Total Pengguna, Total Transaksi).
-  - Peringatan stok rendah (stok ≤ 5 unit).
-  - Tabel transaksi peminjaman terbaru dengan status badge (PENDING, BORROWED, RETURNED, dll.).
-- [x] **Manajemen Barang & Kategori**:
-  - CRUD lengkap dengan validasi integritas (kategori tidak dapat dihapus jika masih digunakan oleh barang).
-- [x] **Sistem Peminjaman & Validasi Stok**:
-  - Validasi stok tidak mencukupi (`InsufficientStockException`).
-  - Pemotongan stok otomatis saat peminjaman disetujui (APPROVE).
-  - Pengembalian stok otomatis saat barang dikembalikan (RETURN).
-- [x] **Automated Testing**:
-  - 10 automated tests JUnit 5 + MockMvc mencakup otentikasi, otorisasi, penanganan error, validasi stok, dan siklus peminjaman (10/10 PASS).
-
+*Smarter Inventory. Better Control.*
