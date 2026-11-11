@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kategori Barang - Inventory Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item active"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title">Manajemen Kategori Barang</h1>
+            </header>
+
+            <main class="content-body">
+                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                    <!-- Add Category Form -->
+                    <div class="card">
+                        <div class="card-header"><div class="card-title">Tambah Kategori Baru</div></div>
+                        <div class="card-body">
+                            <form th:action="@{/categories/add}" th:object="${newCategory}" method="post">
+
+                                <div class="form-group">
+                                    <label class="form-label" for="name">Nama Kategori *</label>
+                                    <input type="text" id="name" th:field="*{name}" class="form-control" style="padding-left: 1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="description">Deskripsi</label>
+                                    <textarea id="description" th:field="*{description}" class="form-control" style="padding-left: 1rem; min-height: 80px;"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Simpan Kategori</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Category List -->
+                    <div class="card">
+                        <div class="card-header"><div class="card-title">Daftar Kategori</div></div>
+                        <div class="card-body" style="padding: 0;">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Kategori</th>
+                                            <th>Deskripsi</th>
+                                            <th>Jumlah Barang</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:if="${categories.empty}">
+                                            <td colspan="4" style="text-align: center; color: #64748b; padding: 2rem;">Belum ada kategori.</td>
+                                        </tr>
+                                        <tr th:each="cat : ${categories}">
+                                            <td style="font-weight: 600;" th:text="${cat.name}">Nama Kategori</td>
+                                            <td th:text="${cat.description != null ? cat.description : '-'}">Deskripsi</td>
+                                            <td><span class="badge badge-staff" th:text="${cat.itemCount + ' barang'}">0 barang</span></td>
+                                            <td>
+                                                <form th:action="@{/categories/{id}/delete(id=${cat.id})}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?');">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

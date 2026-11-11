@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Laporan Transaksi - Inventory Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item active"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title">Riwayat & Laporan Peminjaman</h1>
+                <div class="navbar-actions">
+                    <a th:href="@{/loans/export(status=${selectedStatus}, borrowerId=${selectedBorrower}, startDate=${startDate}, endDate=${endDate})}" 
+                       class="btn btn-primary">Unduh CSV</a>
+                </div>
+            </header>
+
+            <main class="content-body">
+                <!-- Filter Form -->
+                <div class="card">
+                    <div class="card-body">
+                        <form method="get" th:action="@{/reports}" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <select name="status" class="form-control" style="max-width: 180px; padding-left: 1rem;">
+                                <option value="">Semua Status</option>
+                                <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}" th:selected="${selectedStatus == st}"></option>
+                            </select>
+                            <select name="borrowerId" class="form-control" style="max-width: 200px; padding-left: 1rem;">
+                                <option value="">Semua Peminjam</option>
+                                <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.fullName}" th:selected="${selectedBorrower == u.id}"></option>
+                            </select>
+                            <input type="date" name="startDate" th:value="${startDate}" class="form-control" style="max-width: 160px; padding-left: 1rem;">
+                            <input type="date" name="endDate" th:value="${endDate}" class="form-control" style="max-width: 160px; padding-left: 1rem;">
+                            <button type="submit" class="btn btn-secondary">Filter</button>
+                            <a th:href="@{/reports}" class="btn btn-secondary">Reset</a>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Report Table -->
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Kode</th>
+                                        <th>Peminjam</th>
+                                        <th>Tgl Pinjam</th>
+                                        <th>Batas Kembali</th>
+                                        <th>Tgl Kembali</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${loans.empty}">
+                                        <td colspan="7" style="text-align: center; color: #64748b; padding: 2rem;">Tidak ada data laporan yang cocok.</td>
+                                    </tr>
+                                    <tr th:each="loan : ${loans.content}">
+                                        <td style="font-weight: 600;" th:text="${loan.loanCode}">LN-001</td>
+                                        <td th:text="${loan.borrowerName}">Nama Peminjam</td>
+                                        <td th:text="${#temporals.format(loan.loanDate, 'dd/MM/yyyy')}">01/01/2026</td>
+                                        <td th:text="${#temporals.format(loan.dueDate, 'dd/MM/yyyy')}">08/01/2026</td>
+                                        <td th:text="${loan.returnDate != null ? #temporals.format(loan.returnDate, 'dd/MM/yyyy') : '-'}">-</td>
+                                        <td>
+                                            <span th:class="'badge badge-' + ${#strings.toLowerCase(loan.status)}" th:text="${loan.status}">PENDING</span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/loans/{id}(id=${loan.id})}" class="btn btn-secondary btn-sm">Lihat Detail</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

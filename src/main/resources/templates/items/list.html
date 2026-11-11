@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Barang - Inventory Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Menu Utama</div>
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item active"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title">Manajemen Data Barang</h1>
+                <div class="navbar-actions">
+                    <a th:href="@{/items/add}" class="btn btn-primary">+ Tambah Barang</a>
+                </div>
+            </header>
+
+            <main class="content-body">
+                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <!-- Filters -->
+                <div class="card">
+                    <div class="card-body">
+                        <form method="get" th:action="@{/items}" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                            <input type="text" name="search" th:value="${search}" placeholder="Cari kode atau nama..." class="form-control" style="max-width: 260px; padding-left: 1rem;">
+                            <select name="categoryId" class="form-control" style="max-width: 200px; padding-left: 1rem;">
+                                <option value="">Semua Kategori</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${categoryId == cat.id}"></option>
+                            </select>
+                            <select name="stockFilter" class="form-control" style="max-width: 180px; padding-left: 1rem;">
+                                <option value="">Semua Stok</option>
+                                <option value="low" th:selected="${stockFilter == 'low'}">Stok Rendah (≤ 5)</option>
+                            </select>
+                            <button type="submit" class="btn btn-secondary">Filter</button>
+                            <a th:href="@{/items}" class="btn btn-secondary">Reset</a>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Items Table -->
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Kode</th>
+                                        <th>Nama Barang</th>
+                                        <th>Kategori</th>
+                                        <th>Total Stok</th>
+                                        <th>Tersedia</th>
+                                        <th>Lokasi</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${items.empty}">
+                                        <td colspan="7" style="text-align: center; color: #64748b; padding: 2rem;">Belum ada data barang.</td>
+                                    </tr>
+                                    <tr th:each="item : ${items.content}">
+                                        <td style="font-weight: 600;" th:text="${item.itemCode}">ITM-001</td>
+                                        <td th:text="${item.name}">Nama Barang</td>
+                                        <td th:text="${item.categoryName != null ? item.categoryName : '-'}">Kategori</td>
+                                        <td th:text="${item.quantity}">10</td>
+                                        <td>
+                                            <span th:class="${item.availableQuantity <= 5 ? 'badge badge-low-stock' : 'badge badge-in-stock'}" 
+                                                  th:text="${item.availableQuantity}">10</span>
+                                        </td>
+                                        <td th:text="${item.storageLocation != null ? item.storageLocation : '-'}">Gudang A</td>
+                                        <td>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <a th:href="@{/items/{id}(id=${item.id})}" class="btn btn-secondary btn-sm">Detail</a>
+                                                <a th:href="@{/items/{id}/edit(id=${item.id})}" class="btn btn-secondary btn-sm">Edit</a>
+                                                <form th:action="@{/items/{id}/delete(id=${item.id})}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus barang ini?');">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
+

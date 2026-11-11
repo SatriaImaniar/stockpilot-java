@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Peminjaman - Inventory Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item active"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title">Detail Peminjaman</h1>
+                <div class="navbar-actions">
+                    <a th:href="@{/loans}" class="btn btn-secondary">&larr; Kembali</a>
+                </div>
+            </header>
+
+            <main class="content-body" style="max-width: 900px;">
+                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Informasi Transaksi: <span th:text="${loan.loanCode}">LN-001</span></div>
+                        <span th:class="'badge badge-' + ${#strings.toLowerCase(loan.status)}" th:text="${loan.status}">PENDING</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tr>
+                                <th style="width: 220px;">Peminjam</th>
+                                <td th:text="${loan.borrowerName}">Nama Peminjam</td>
+                            </tr>
+                            <tr>
+                                <th>Disetujui Oleh</th>
+                                <td th:text="${loan.approvedByName != null ? loan.approvedByName : '-'}">-</td>
+                            </tr>
+                            <tr>
+                                <th>Tanggal Pinjam</th>
+                                <td th:text="${#temporals.format(loan.loanDate, 'dd MMMM yyyy')}">01 Januari 2026</td>
+                            </tr>
+                            <tr>
+                                <th>Batas Pengembalian</th>
+                                <td th:text="${#temporals.format(loan.dueDate, 'dd MMMM yyyy')}">08 Januari 2026</td>
+                            </tr>
+                            <tr>
+                                <th>Tanggal Pengembalian</th>
+                                <td th:text="${loan.returnDate != null ? #temporals.format(loan.returnDate, 'dd MMMM yyyy') : '-'}">-</td>
+                            </tr>
+                            <tr>
+                                <th>Catatan</th>
+                                <td th:text="${loan.notes != null ? loan.notes : '-'}">-</td>
+                            </tr>
+                        </table>
+
+                        <h3 style="margin: 2rem 0 1rem; font-size: 1.1rem; color: var(--secondary-navy);">Daftar Barang yang Dipinjam</h3>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Kode Barang</th>
+                                    <th>Nama Barang</th>
+                                    <th>Jumlah</th>
+                                    <th>Sudah Dikembalikan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${loan.loanItems}">
+                                    <td th:text="${item.itemCode}">ITM-001</td>
+                                    <td th:text="${item.itemName}">Laptop</td>
+                                    <td th:text="${item.quantity}">1</td>
+                                    <td th:text="${item.returnedQuantity}">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Action Buttons based on status -->
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <!-- If PENDING: Approve & Reject buttons -->
+                            <form th:if="${loan.status.name() == 'PENDING'}" th:action="@{/loans/{id}/approve(id=${loan.id})}" method="post">
+                                <button type="submit" class="btn btn-success">Setujui Peminjaman</button>
+                            </form>
+                            <form th:if="${loan.status.name() == 'PENDING'}" th:action="@{/loans/{id}/reject(id=${loan.id})}" method="post">
+                                <button type="submit" class="btn btn-danger">Tolak Peminjaman</button>
+                            </form>
+
+                            <!-- If BORROWED or OVERDUE: Return button -->
+                            <form th:if="${loan.status.name() == 'BORROWED' or loan.status.name() == 'OVERDUE'}" th:action="@{/loans/{id}/return(id=${loan.id})}" method="post">
+                                <button type="submit" class="btn btn-primary">Proses Pengembalian Barang</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pengaturan Profil - Inventory Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item active"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title">Pengaturan Profil</h1>
+            </header>
+
+            <main class="content-body" style="max-width: 800px;">
+                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <!-- Update Info -->
+                <div class="card">
+                    <div class="card-header"><div class="card-title">Informasi Akun</div></div>
+                    <div class="card-body">
+                        <form th:action="@{/profile/update}" th:object="${user}" method="post">
+
+                            <div class="form-group">
+                                <label class="form-label" for="username">Username</label>
+                                <input type="text" id="username" th:field="*{username}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="fullName">Nama Lengkap</label>
+                                <input type="text" id="fullName" th:field="*{fullName}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email</label>
+                                <input type="email" id="email" th:field="*{email}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Simpan Profil</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Change Password -->
+                <div class="card">
+                    <div class="card-header"><div class="card-title">Ganti Password</div></div>
+                    <div class="card-body">
+                        <form th:action="@{/profile/change-password}" th:object="${passwordChange}" method="post">
+
+                            <div class="form-group">
+                                <label class="form-label" for="currentPassword">Password Saat Ini *</label>
+                                <input type="password" id="currentPassword" th:field="*{currentPassword}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="newPassword">Password Baru *</label>
+                                <input type="password" id="newPassword" th:field="*{newPassword}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="confirmPassword">Konfirmasi Password Baru *</label>
+                                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Ubah Password</button>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

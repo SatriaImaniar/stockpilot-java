@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Barang - Inventory Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item active"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title">Detail Barang</h1>
+                <div class="navbar-actions">
+                    <a th:href="@{/items/{id}/edit(id=${item.id})}" class="btn btn-primary">Edit Barang</a>
+                    <a th:href="@{/items}" class="btn btn-secondary">&larr; Kembali</a>
+                </div>
+            </header>
+
+            <main class="content-body" style="max-width: 800px;">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title" th:text="${item.name}">Nama Barang</div>
+                        <span th:class="${item.availableQuantity <= 5 ? 'badge badge-low-stock' : 'badge badge-in-stock'}"
+                              th:text="${item.availableQuantity + ' Tersedia'}">10 Tersedia</span>
+                    </div>
+                    <div class="card-body">
+                        <table class="table">
+                            <tr>
+                                <th style="width: 200px;">ID Barang</th>
+                                <td th:text="${item.id}">1</td>
+                            </tr>
+                            <tr>
+                                <th>Kode Barang</th>
+                                <td style="font-weight: 600;" th:text="${item.itemCode}">ITM-001</td>
+                            </tr>
+                            <tr>
+                                <th>Nama Barang</th>
+                                <td th:text="${item.name}">Laptop Dell XPS</td>
+                            </tr>
+                            <tr>
+                                <th>Kategori</th>
+                                <td th:text="${item.categoryName != null ? item.categoryName : '-'}">Elektronik</td>
+                            </tr>
+                            <tr>
+                                <th>Total Stok</th>
+                                <td th:text="${item.quantity}">20</td>
+                            </tr>
+                            <tr>
+                                <th>Stok Tersedia</th>
+                                <td th:text="${item.availableQuantity}">15</td>
+                            </tr>
+                            <tr>
+                                <th>Sedang Dipinjam</th>
+                                <td th:text="${item.quantity - item.availableQuantity}">5</td>
+                            </tr>
+                            <tr>
+                                <th>Lokasi Penyimpanan</th>
+                                <td th:text="${item.storageLocation != null ? item.storageLocation : '-'}">Gudang 1</td>
+                            </tr>
+                            <tr>
+                                <th>Deskripsi</th>
+                                <td th:text="${item.description != null ? item.description : '-'}">-</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
+

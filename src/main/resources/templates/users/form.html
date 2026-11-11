@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${user.id != null ? 'Edit Pengguna' : 'Tambah Pengguna'} + ' - Inventory Management'">Form Pengguna</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item active"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title" th:text="${user.id != null ? 'Edit Pengguna' : 'Tambah Pengguna Baru'}">Form Pengguna</h1>
+                <div class="navbar-actions">
+                    <a th:href="@{/users}" class="btn btn-secondary">&larr; Kembali</a>
+                </div>
+            </header>
+
+            <main class="content-body" style="max-width: 700px;">
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="${user.id != null ? '/users/' + user.id + '/edit' : '/users/add'}" 
+                              th:object="${user}" method="post">
+
+                            <div class="form-group">
+                                <label class="form-label" for="username">Username *</label>
+                                <input type="text" id="username" th:field="*{username}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="fullName">Nama Lengkap *</label>
+                                <input type="text" id="fullName" th:field="*{fullName}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email *</label>
+                                <input type="email" id="email" th:field="*{email}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="password">Password <span th:if="${user.id != null}">(Kosongkan jika tidak ingin mengubah)</span><span th:if="${user.id == null}">*</span></label>
+                                <input type="password" id="password" th:field="*{password}" class="form-control" style="padding-left: 1rem;" th:required="${user.id == null}">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="role">Role *</label>
+                                <select id="role" th:field="*{role}" class="form-control" style="padding-left: 1rem;" required>
+                                    <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">Simpan Pengguna</button>
+                                <a th:href="@{/users}" class="btn btn-secondary">Batal</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

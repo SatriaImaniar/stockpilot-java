@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${item.id != null ? 'Edit Barang' : 'Tambah Barang'} + ' - Inventory Management'">Form Barang</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item active"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title" th:text="${item.id != null ? 'Edit Barang' : 'Tambah Barang Baru'}">Form Barang</h1>
+                <div class="navbar-actions">
+                    <a th:href="@{/items}" class="btn btn-secondary">&larr; Kembali</a>
+                </div>
+            </header>
+
+            <main class="content-body" style="max-width: 800px;">
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="${item.id != null ? '/items/' + item.id + '/edit' : '/items/add'}" 
+                              th:object="${item}" method="post">
+
+                            <div class="form-group">
+                                <label class="form-label" for="itemCode">Kode Barang *</label>
+                                <input type="text" id="itemCode" th:field="*{itemCode}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="name">Nama Barang *</label>
+                                <input type="text" id="name" th:field="*{name}" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="categoryId">Kategori</label>
+                                <select id="categoryId" th:field="*{categoryId}" class="form-control" style="padding-left: 1rem;">
+                                    <option value="">-- Pilih Kategori --</option>
+                                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="quantity">Jumlah Stok *</label>
+                                <input type="number" id="quantity" th:field="*{quantity}" min="0" class="form-control" style="padding-left: 1rem;" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="storageLocation">Lokasi Penyimpanan</label>
+                                <input type="text" id="storageLocation" th:field="*{storageLocation}" class="form-control" style="padding-left: 1rem;" placeholder="Contoh: Rak B-3, Gudang Utama">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="description">Deskripsi</label>
+                                <textarea id="description" th:field="*{description}" class="form-control" style="padding-left: 1rem; min-height: 100px;"></textarea>
+                            </div>
+
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">Simpan Barang</button>
+                                <a th:href="@{/items}" class="btn btn-secondary">Batal</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
+

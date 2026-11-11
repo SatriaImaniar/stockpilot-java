@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajukan Peminjaman - Inventory Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item active"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title">Tambah Transaksi Peminjaman</h1>
+                <div class="navbar-actions">
+                    <a th:href="@{/loans}" class="btn btn-secondary">&larr; Kembali</a>
+                </div>
+            </header>
+
+            <main class="content-body" style="max-width: 800px;">
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="@{/loans/add}" th:object="${loan}" method="post">
+
+                            <div class="form-group">
+                                <label class="form-label" for="borrowerId">Pilih Peminjam *</label>
+                                <select id="borrowerId" th:field="*{borrowerId}" class="form-control" style="padding-left: 1rem;" required>
+                                    <option value="">-- Pilih Pengguna --</option>
+                                    <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.fullName + ' (' + user.username + ')'}"></option>
+                                </select>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label class="form-label" for="loanDate">Tanggal Peminjaman *</label>
+                                    <input type="date" id="loanDate" th:field="*{loanDate}" class="form-control" style="padding-left: 1rem;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="dueDate">Batas Pengembalian *</label>
+                                    <input type="date" id="dueDate" th:field="*{dueDate}" class="form-control" style="padding-left: 1rem;" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="notes">Catatan / Keperluan</label>
+                                <textarea id="notes" th:field="*{notes}" class="form-control" style="padding-left: 1rem; min-height: 80px;"></textarea>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 1.5rem;">
+                                <label class="form-label">Pilih Barang yang Dipinjam *</label>
+                                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 0.5rem;">
+                                    <select name="itemIds" class="form-control" style="padding-left: 1rem;" required>
+                                        <option value="">-- Pilih Barang --</option>
+                                        <option th:each="it : ${availableItems}" th:value="${it.id}" 
+                                                th:text="${it.name + ' (' + it.itemCode + ') - Stok: ' + it.availableQuantity}"></option>
+                                    </select>
+                                    <input type="number" name="quantities" value="1" min="1" class="form-control" style="padding-left: 1rem;" placeholder="Jumlah" required>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">Ajukan Peminjaman</button>
+                                <a th:href="@{/loans}" class="btn btn-secondary">Batal</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kelola Pengguna - Inventory Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><svg viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4 8 4 8-4zm-8 6l-8-4v6l8 4 8-4v-6l-8 4z"/></svg></div>
+                <div><div class="brand-title">Inventory IMS</div><div class="brand-subtitle">Enterprise System</div></div>
+            </div>
+            <nav class="sidebar-nav">
+                <a th:href="@{/dashboard}" class="nav-item"><span>Dashboard</span></a>
+                <a th:href="@{/items}" class="nav-item"><span>Data Barang</span></a>
+                <a th:href="@{/categories}" class="nav-item"><span>Kategori</span></a>
+                <a th:href="@{/loans}" class="nav-item"><span>Peminjaman</span></a>
+                <a th:href="@{/reports}" class="nav-item"><span>Laporan</span></a>
+                <a th:href="@{/users}" class="nav-item active"><span>Kelola Pengguna</span></a>
+                <a th:href="@{/profile}" class="nav-item"><span>Pengaturan Profil</span></a>
+            </nav>
+        </aside>
+
+        <div class="main-wrapper">
+            <header class="top-navbar">
+                <h1 class="page-title">Manajemen Pengguna</h1>
+                <div class="navbar-actions">
+                    <a th:href="@{/users/add}" class="btn btn-primary">+ Tambah Pengguna</a>
+                </div>
+            </header>
+
+            <main class="content-body">
+                <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                <!-- Users Table -->
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Nama Lengkap</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="user : ${users.content}">
+                                        <td style="font-weight: 600;" th:text="${user.username}">username</td>
+                                        <td th:text="${user.fullName}">Nama Lengkap</td>
+                                        <td th:text="${user.email}">user@mail.com</td>
+                                        <td>
+                                            <span th:class="'badge badge-' + ${#strings.toLowerCase(user.role)}" th:text="${user.role}">STAFF</span>
+                                        </td>
+                                        <td>
+                                            <span th:class="${user.active ? 'badge badge-in-stock' : 'badge badge-low-stock'}" 
+                                                  th:text="${user.active ? 'Aktif' : 'Nonaktif'}">Aktif</span>
+                                        </td>
+                                        <td>
+                                            <div style="display: flex; gap: 0.5rem;">
+                                                <a th:href="@{/users/{id}/edit(id=${user.id})}" class="btn btn-secondary btn-sm">Edit</a>
+                                                <form th:action="@{/users/{id}/toggle(id=${user.id})}" method="post">
+                                                    <button type="submit" class="btn btn-secondary btn-sm" th:text="${user.active ? 'Nonaktifkan' : 'Aktifkan'}">Toggle</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
