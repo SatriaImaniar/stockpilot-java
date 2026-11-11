@@ -135,3 +135,4 @@ class InventoryServiceTest {
         assertEquals(5, itemAfterReturn.getAvailableQuantity());
     }
 }
+
